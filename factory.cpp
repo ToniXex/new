@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 
+=======
+>>>>>>> 9584a1702510e81e4554aecadf86b508ab95c8ba
 
 #include<iostream>
 #include"factory.h"
