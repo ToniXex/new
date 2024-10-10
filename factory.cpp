@@ -1,14 +1,40 @@
-//Класс Фабрика хранит данные о мебели, работниках и машинах.
-// Для мебели
-//определено : тип мебели, габариты(высота, ширина, глубина), цвет, материал,
-//стоимость.
-// Для работника определено : ФИО, должность, заработная плата,
-//адрес проживания, телефон.
-// Для машины определено : марка, модель,
-//гос.номер.
+
 
 #include<iostream>
 #include"factory.h"
+
+factory::furniture::furniture()
+{
+	this->type = "";
+	this->width = 0;
+	this->height = 0;
+	this->depth = 0;
+	this->color = "";
+	this->material = "";
+	this->cost = 0;
+}
+
+factory::furniture::furniture(std::string type, int width, int height, int depth, std::string color, std::string material, int cost)
+{
+	this->type = type;
+	this->width = width;
+	this->height = height;
+	this->depth = depth;
+	this->color = color;
+	this->material = material;
+	this->cost = cost;
+}
+
+factory::furniture::furniture(furniture& furniture)
+{
+	this->type = furniture.type;
+	this->width = furniture.width;
+	this->height = furniture.height;
+	this->depth = furniture.depth;
+	this->color = furniture.color;
+	this->material = furniture.material;
+	this->cost = furniture.cost;
+}
 
 std::string factory::furniture::getType()
 {
@@ -80,6 +106,27 @@ void factory::furniture::setCost(int newCost)
 	this->cost = newCost;
 }
 
+factory::car::car()
+{
+	this->mark = "";
+	this->model = "";
+	this->stateNumber = 0;
+}
+
+factory::car::car(std::string mark, std::string model, int stateNumber)
+{
+	this->mark = mark;
+	this->model = model;
+	this->stateNumber = stateNumber;
+}
+
+factory::car::car(car& car)
+{
+	this->mark = car.mark;
+	this->model = car.model;
+	this->stateNumber = car.stateNumber;
+}
+
 std::string factory::car::getMark()
 {
 	return this->mark;
@@ -108,6 +155,33 @@ void factory::car::setModel(std::string newModel)
 void factory::car::setStateNumber(int newStateNumber)
 {
 	this->stateNumber = newStateNumber;
+}
+
+factory::worker::worker()
+{
+	this->FIO = "";
+	this->post = "";
+	this->address = "";
+	this->phoneNumber = "";
+	this->wages = 0;
+}
+
+factory::worker::worker(std::string FIO, std::string post, std::string address, std::string phoneNumber, int wages)
+{
+	this->FIO = FIO;
+	this->post = post;
+	this->address = address;
+	this->phoneNumber = phoneNumber;
+	this->wages = wages;
+}
+
+factory::worker::worker(worker& worker)
+{
+	this->FIO = worker.FIO;
+	this->post = worker.post;
+	this->address = worker.address;
+	this->phoneNumber = worker.phoneNumber;
+	this->wages = worker.wages;
 }
 
 std::string factory::worker::getFIO()
@@ -152,10 +226,43 @@ void factory::worker::setAddress(std::string newAddress)
 
 void factory::worker::setPhoneNumber(std::string newPhoneNumber)
 {
-	this->phoneNumber = newPhoneNumber
+	this->phoneNumber = newPhoneNumber;
 }
 
 void factory::worker::setWages(int newWages)
 {
 	this->wages = newWages;
+}
+
+factory::factory()
+{
+	furnitures = nullptr;
+	workers = nullptr;
+	cars = nullptr;
+	countFurniture = 0;
+	countWorker = 0;
+	countCar = 0;
+}
+
+int factory::getCountFurnitures()
+{
+	return this->countFurniture;
+}
+
+int factory::getCountWorkers()
+{
+	return this->countWorker;
+}
+
+int factory::getCountCars()
+{
+	return this->countCar;
+}
+
+void factory::addFurniture(furniture& furniture)
+{
+	if (this->countFurniture == 0) {
+		this->countFurniture++;
+
+	}
 }
