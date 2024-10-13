@@ -4,7 +4,7 @@
 #include <string>
 
 
-class factory {	
+class factory {
 private:
 
 	int countFurniture;
@@ -39,6 +39,8 @@ private:
 		void setHeight(int newHeight);
 		void setDepth(int newDepth);
 		void setCost(int newCost);
+		void setDataFurniture(std::string type, int width, int height, int depth, std::string color, std::string material, int cost);
+
 	};
 
 	class worker {
@@ -50,13 +52,13 @@ private:
 		int wages;
 	public:
 		worker();
-		worker(std::string FIO,std::string post,std::string address,std::string phoneNumber,int wages);
+		worker(std::string FIO, std::string post, std::string address, std::string phoneNumber, int wages);
 		worker(worker& worker);
 
 		std::string getFIO();
 		std::string getPost();
 		std::string getAddress();
-		std::string PhoneNumber();
+		std::string getPhoneNumber();
 		int getWages();
 
 		void setFIO(std::string newFIO);
@@ -64,6 +66,7 @@ private:
 		void setAddress(std::string newAddress);
 		void setPhoneNumber(std::string newPhoneNumber);
 		void setWages(int newWages);
+		void setDataWorker(std::string FIO, std::string post, std::string address, std::string phoneNumber, int wages);
 	};
 
 	class car {
@@ -73,7 +76,7 @@ private:
 		int stateNumber;
 	public:
 		car();
-		car(std::string mark,std::string model,int stateNumber);
+		car(std::string mark, std::string model, int stateNumber);
 		car(car& car);
 
 		std::string getMark();
@@ -83,6 +86,7 @@ private:
 		void setMark(std::string newMark);
 		void setModel(std::string newModel);
 		void setStateNumber(int newStateNumber);
+		void setDataCar(std::string mark, std::string model, int stateNumber);
 	};
 
 	furniture* furnitures;
@@ -90,9 +94,19 @@ private:
 	car* cars;
 public:
 	factory();
-	~factory();
+	/*~factory();*/
+
 	int getCountFurnitures();
 	int getCountWorkers();
 	int getCountCars();
-	void addFurniture(furniture&furniture);
+
+	void addFurniture(std::string type, int width, int height, int depth, std::string color, std::string material, int cost);
+	void addWorker(std::string FIO, std::string post, std::string address, std::string phoneNumber, int wages);
+	void addCar(std::string mark, std::string model, int stateNumber);
+
+	void printFurniture(int number);
+	void printWorker(int number);
+	void printCar(int number);
+
+	void deleteFurniture(int number);
 };

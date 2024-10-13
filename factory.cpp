@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-
-=======
->>>>>>> 9584a1702510e81e4554aecadf86b508ab95c8ba
 
 #include<iostream>
 #include"factory.h"
@@ -109,6 +105,18 @@ void factory::furniture::setCost(int newCost)
 	this->cost = newCost;
 }
 
+void factory::furniture::setDataFurniture(std::string type, int width, int height, int depth, std::string color, std::string material, int cost)
+{
+	this->type = type;
+	this->width = width;
+	this->height = height;
+	this->depth = depth;
+	this->color = color;
+	this->material = material;
+	this->cost = cost;
+}
+
+
 factory::car::car()
 {
 	this->mark = "";
@@ -160,6 +168,13 @@ void factory::car::setStateNumber(int newStateNumber)
 	this->stateNumber = newStateNumber;
 }
 
+void factory::car::setDataCar(std::string mark, std::string model, int stateNumber)
+{
+	this->mark = mark;
+	this->model = model;
+	this->stateNumber = stateNumber;
+}
+
 factory::worker::worker()
 {
 	this->FIO = "";
@@ -202,7 +217,7 @@ std::string factory::worker::getAddress()
 	return address;
 }
 
-std::string factory::worker::PhoneNumber()
+std::string factory::worker::getPhoneNumber()
 {
 	return phoneNumber;
 }
@@ -262,10 +277,113 @@ int factory::getCountCars()
 	return this->countCar;
 }
 
-void factory::addFurniture(furniture& furniture)
-{
-	if (this->countFurniture == 0) {
+void factory::addFurniture(std::string type, int width, int height, int depth, std::string color, std::string material, int cost){
+	if(this->countFurniture == 0){
 		this->countFurniture++;
-
+		this->furnitures = new furniture(type, width, height, depth, color, material, cost);
 	}
+	else {
+		this->countFurniture++;
+		furniture* newFurnitures = new furniture[countFurniture];
+		for (int i = 0; i < countFurniture - 1; i++) {
+			newFurnitures[i].setDataFurniture(this->furnitures[i].getType(), this->furnitures[i].getWidth(), this->furnitures[i].getHeight(), this->furnitures[i].getDepth(), this->furnitures[i].getColor(), this->furnitures[i].getMaterial(), this->furnitures[i].getCost());
+		}
+		newFurnitures[countFurniture - 1].setDataFurniture(type, width, height, depth, color, material, cost);
+		/*delete [] this->furnitures;
+		this->furnitures = nullptr;*/
+		this->furnitures = newFurnitures;
+		newFurnitures = nullptr;
+	}
+}
+
+void factory::worker::setDataWorker(std::string FIO, std::string post, std::string address, std::string phoneNumber, int wages)
+{
+	this->FIO = FIO;
+	this->post = post;
+	this->address = address;
+	this->phoneNumber = phoneNumber;
+	this->wages = wages;
+}
+
+void factory::printFurniture(int number)
+{
+	std::cout << number + 1 << " type " << this->furnitures[number].getType() << "\n";
+	std::cout <<"  color " << this->furnitures[number].getColor() << "\n";
+	std::cout <<"  cost " << this->furnitures[number].getCost() << "\n";
+	std::cout <<"  depth " << this->furnitures[number].getDepth() << "\n";
+	std::cout <<"  height " << this->furnitures[number].getHeight() << "\n";
+	std::cout <<"  width " << this->furnitures[number].getWidth() << "\n";
+	std::cout <<"  material " << this->furnitures[number].getMaterial() << "\n\n";
+	
+}
+
+void factory::addWorker(std::string FIO, std::string post, std::string address, std::string phoneNumber, int wages)
+{
+	if (this->countWorker == 0) {
+		this->countWorker++;
+		this->workers = new worker(FIO, post, address, phoneNumber, wages);
+	}
+	else {
+		this->countWorker++;
+		worker* newWorkers = new worker[countWorker];
+		for (int i = 0; i < countWorker - 1; i++) {
+			newWorkers[i].setDataWorker(this->workers[i].getFIO(), this->workers[i].getPost(), this->workers[i].getAddress(), this->workers[i].getPhoneNumber(), this->workers[i].getWages());
+		}
+		newWorkers[countWorker - 1].setDataWorker(FIO, post, address, phoneNumber, wages);
+		delete this->workers;
+		this->workers = newWorkers;
+		newWorkers = nullptr;
+	}
+}
+
+void factory::addCar(std::string mark, std::string model, int stateNumber)
+{
+	if (this->countCar == 0) {
+		this->countCar++;
+		this->cars = new car(mark, model, stateNumber);
+	}
+	else {
+		this->countCar++;
+		car* newCar = new car[countCar];
+		for (int i = 0; i < countCar - 1; i++) {
+			newCar[i].setDataCar(this->cars[i].getMark(), this->cars[i].getModel(), this->cars[i].getStateNumber());
+		}
+		newCar[countCar - 1].setDataCar(mark, model, stateNumber);
+		delete this->cars;
+		this->cars = newCar;
+		newCar = nullptr;
+	}
+}
+
+void factory::printWorker(int number)
+{
+	std::cout << number + 1 << " FIO " << this->workers[number].getFIO() << "\n";
+	std::cout << "  post " << this->workers[number].getPost() << "\n";
+	std::cout << "  address " << this->workers[number].getAddress() << "\n";
+	std::cout << "  phoneNumber " << this->workers[number].getPhoneNumber() << "\n";
+	std::cout << "  wages " << this->workers[number].getWages() << "\n\n";
+}
+
+void factory::printCar(int number)
+{
+	std::cout << number + 1 << " mark " << this->cars[number].getMark() << "\n";
+	std::cout << "  model " << this->cars[number].getModel() << "\n";
+	std::cout << "  stateNumber " << this->cars[number].getStateNumber() << "\n\n";
+
+}
+
+void factory::deleteFurniture(int number)
+{
+	this->countFurniture--;
+	furniture* newFurnitures = new furniture[countFurniture];
+	int j = 0;
+	for (int i = 0; i < countFurniture; i++) {
+		if(i != number){
+			newFurnitures[j].setDataFurniture(this->furnitures[i].getType(), this->furnitures[i].getWidth(), this->furnitures[i].getHeight(), this->furnitures[i].getDepth(), this->furnitures[i].getColor(), this->furnitures[i].getMaterial(), this->furnitures[i].getCost());
+			j++;
+		}
+	}
+	delete this->furnitures;
+	this->furnitures = newFurnitures;
+	newFurnitures = nullptr;
 }
