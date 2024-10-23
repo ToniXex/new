@@ -2,6 +2,9 @@
 #include<iostream>
 #include"factory.h"
 
+#include <string>
+#include <fstream>
+
 factory::furniture::furniture()
 {
 	this->type = "";
@@ -115,7 +118,6 @@ void factory::furniture::setDataFurniture(std::string type, int width, int heigh
 	this->material = material;
 	this->cost = cost;
 }
-
 
 factory::car::car()
 {
@@ -262,6 +264,13 @@ factory::factory()
 	countCar = 0;
 }
 
+factory::~factory()
+{
+	delete[] furnitures;
+	delete[] workers;
+	delete[] cars;
+}
+
 int factory::getCountFurnitures()
 {
 	return this->countFurniture;
@@ -277,23 +286,17 @@ int factory::getCountCars()
 	return this->countCar;
 }
 
-void factory::addFurniture(std::string type, int width, int height, int depth, std::string color, std::string material, int cost){
-	if(this->countFurniture == 0){
-		this->countFurniture++;
-		this->furnitures = new furniture(type, width, height, depth, color, material, cost);
+void factory::addFurniture(std::string type, int width, int height, int depth, std::string color, std::string material, int cost) {
+	furniture* newFurniture = new furniture[countFurniture + 1];  // создаем новый массив, на 1 больше
+
+	for (int i = 0; i < countFurniture; i++) {
+		newFurniture[i] = furnitures[i];  // копируем старые элементы
 	}
-	else {
-		this->countFurniture++;
-		furniture* newFurnitures = new furniture[countFurniture];
-		for (int i = 0; i < countFurniture - 1; i++) {
-			newFurnitures[i].setDataFurniture(this->furnitures[i].getType(), this->furnitures[i].getWidth(), this->furnitures[i].getHeight(), this->furnitures[i].getDepth(), this->furnitures[i].getColor(), this->furnitures[i].getMaterial(), this->furnitures[i].getCost());
-		}
-		newFurnitures[countFurniture - 1].setDataFurniture(type, width, height, depth, color, material, cost);
-		/*delete [] this->furnitures;
-		this->furnitures = nullptr;*/
-		this->furnitures = newFurnitures;
-		newFurnitures = nullptr;
-	}
+
+	newFurniture[countFurniture].setDataFurniture(type, width, height, depth, color, material, cost);  // добавляем новый элемент
+	delete[] furnitures;  // освобождаем старый массив
+	furnitures = newFurniture;  // обновляем указатель
+	countFurniture++;
 }
 
 void factory::worker::setDataWorker(std::string FIO, std::string post, std::string address, std::string phoneNumber, int wages)
@@ -319,40 +322,33 @@ void factory::printFurniture(int number)
 
 void factory::addWorker(std::string FIO, std::string post, std::string address, std::string phoneNumber, int wages)
 {
-	if (this->countWorker == 0) {
-		this->countWorker++;
-		this->workers = new worker(FIO, post, address, phoneNumber, wages);
+	if (wages > 1000000) {
+		throw std::invalid_argument("зп слишком большая");
 	}
-	else {
-		this->countWorker++;
-		worker* newWorkers = new worker[countWorker];
-		for (int i = 0; i < countWorker - 1; i++) {
-			newWorkers[i].setDataWorker(this->workers[i].getFIO(), this->workers[i].getPost(), this->workers[i].getAddress(), this->workers[i].getPhoneNumber(), this->workers[i].getWages());
-		}
-		newWorkers[countWorker - 1].setDataWorker(FIO, post, address, phoneNumber, wages);
-		delete this->workers;
-		this->workers = newWorkers;
-		newWorkers = nullptr;
+	worker* newWorker = new worker[countWorker + 1];  // создаем новый массив, на 1 больше
+
+	for (int i = 0; i < countWorker; i++) {
+		newWorker[i] = workers[i];  // копируем старые элементы
 	}
+
+	newWorker[countWorker].setDataWorker(FIO, post, address, phoneNumber, wages);  // добавляем новый элемент
+	delete[] workers;  // освобождаем старый массив
+	workers = newWorker;  // обновляем указатель
+	countWorker++;
 }
 
 void factory::addCar(std::string mark, std::string model, int stateNumber)
 {
-	if (this->countCar == 0) {
-		this->countCar++;
-		this->cars = new car(mark, model, stateNumber);
+	car* newCar = new car[countCar + 1];  // создаем новый массив, на 1 больше
+
+	for (int i = 0; i < countCar; i++) {
+		newCar[i] = cars[i];  // копируем старые элементы
 	}
-	else {
-		this->countCar++;
-		car* newCar = new car[countCar];
-		for (int i = 0; i < countCar - 1; i++) {
-			newCar[i].setDataCar(this->cars[i].getMark(), this->cars[i].getModel(), this->cars[i].getStateNumber());
-		}
-		newCar[countCar - 1].setDataCar(mark, model, stateNumber);
-		delete this->cars;
-		this->cars = newCar;
-		newCar = nullptr;
-	}
+
+	newCar[countCar].setDataCar(mark, model, stateNumber);  // добавляем новый элемент
+	delete[] cars;  // освобождаем старый массив
+	cars = newCar;  // обновляем указатель
+	countCar++;
 }
 
 void factory::printWorker(int number)
@@ -372,18 +368,235 @@ void factory::printCar(int number)
 
 }
 
+void factory::printAll()
+{
+	std::cout << "furniture\n";
+	for(int i = 0; i < this->getCountFurnitures(); i++){
+		this->printFurniture(i);
+	}
+	std::cout << "worker\n";
+	for (int i = 0; i < this->getCountWorkers(); i++) {
+		this->printWorker(i);
+	}
+	std::cout << "car\n";
+	for (int i = 0; i < this->getCountCars(); i++) {
+		this->printCar(i);
+	}
+}
+void factory::changeFurniture(int number, int number1, std::string type, int width, int height, int depth, std::string color, std::string material, int cost)
+{
+	switch (number) {
+	case 1:
+		this->furnitures[number1].setType(type);
+		return;
+	case 2:
+		this->furnitures[number1].setWidth(width);
+		return;
+	case 3:
+		this->furnitures[number1].setHeight(height);
+		return;
+	case 4:
+		this->furnitures[number1].setDepth(depth);
+		return;
+	case 5:
+		this->furnitures[number1].setColor(color);
+		return;
+	case 6:
+		this->furnitures[number1].setMaterial(material);
+		return;
+	case 7:
+		this->furnitures[number1].setCost(cost);
+		return;
+	}
+}
+
+void factory::changeWorker(int number, int number1, std::string FIO, std::string post, std::string address, std::string phoneNumber, int wages)
+{
+	switch (number) {
+	case 1:
+		this->workers[number1].setFIO(FIO);
+		return;
+	case 2:
+		this->workers[number1].setPost(post);
+		return;
+	case 3:
+		this->workers[number1].setAddress(address);
+		return;
+	case 4:
+		this->workers[number1].setPhoneNumber(phoneNumber);
+		return;
+	case 5:
+		this->workers[number1].setWages(wages);
+		return;
+	
+	}
+}
+
+void factory::changeCar(int number, int number1, std::string mark, std::string model, int stateNumber)
+{
+	switch (number) {
+	case 1:
+		this->cars[number1].setMark(mark);
+		return;
+	case 2:
+		this->cars[number1].setModel(model);
+		return;
+	case 3:
+		this->cars[number1].setStateNumber(stateNumber);
+		return;
+	}
+}
+
 void factory::deleteFurniture(int number)
 {
 	this->countFurniture--;
 	furniture* newFurnitures = new furniture[countFurniture];
 	int j = 0;
-	for (int i = 0; i < countFurniture; i++) {
+	for (int i = 0; i < countFurniture + 1; i++) {
 		if(i != number){
 			newFurnitures[j].setDataFurniture(this->furnitures[i].getType(), this->furnitures[i].getWidth(), this->furnitures[i].getHeight(), this->furnitures[i].getDepth(), this->furnitures[i].getColor(), this->furnitures[i].getMaterial(), this->furnitures[i].getCost());
 			j++;
 		}
 	}
-	delete this->furnitures;
 	this->furnitures = newFurnitures;
-	newFurnitures = nullptr;
+}
+
+void factory::deleteWorker(int number)
+{
+	this->countWorker--;
+	worker* newWorkers = new worker[countWorker];
+	int j = 0;
+	for (int i = 0; i < countWorker + 1; i++) {
+		if (i != number) {
+			newWorkers[j].setDataWorker(this->workers[i].getFIO(), this->workers[i].getPost(), this->workers[i].getAddress(),this->workers[i].getPhoneNumber(), this->workers[i].getWages());
+			j++;
+		}
+	}
+	this->workers = newWorkers;
+}
+
+void factory::deleteCar(int number)
+{
+	this->countCar--;
+	car* newCars = new car[countCar];
+	int j = 0;
+	for (int i = 0; i < countCar + 1; i++) {
+		if (i != number) {
+			newCars[j].setDataCar(this->cars[i].getMark(), this->cars[i].getModel(), this->cars[i].getStateNumber());
+			j++;
+		}
+	}
+	this->cars = newCars;
+}
+
+void factory::safe()
+{
+	std::ofstream out;
+	out.open("save.txt");
+	out << countFurniture << "\n";
+	if (this->countFurniture != 0) {
+		for (int i = 0; i < countFurniture; i++) {
+			out << this->furnitures[i].getType() << "\n";
+			out << this->furnitures[i].getColor() << "\n";
+			out << this->furnitures[i].getCost() << "\n";
+			out << this->furnitures[i].getDepth() << "\n";
+			out << this->furnitures[i].getHeight() << "\n";
+			out << this->furnitures[i].getMaterial() << "\n";
+			out << this->furnitures[i].getWidth() << "\n";
+		}
+	}
+	
+	out << countWorker << "\n";
+	if (this->countWorker != 0) {
+		for (int i = 0; i < countWorker; i++) {
+			out << this->workers[i].getAddress() << "\n";
+			out << this->workers[i].getFIO() << "\n";
+			out << this->workers[i].getPhoneNumber() << "\n";
+			out << this->workers[i].getPost() << "\n";
+			out << this->workers[i].getWages() << "\n";
+		}
+	}
+	
+	out << countCar << "\n";
+	if (this->countCar != 0) {
+		for (int i = 0; i < countCar; i++) {
+			out << this->cars[i].getMark() << "\n";
+			out << this->cars[i].getModel() << "\n";
+			out << this->cars[i].getStateNumber() << "\n";
+		}
+	}
+}
+
+void factory::open()
+{
+	std::string line;
+	
+	std::string type;
+	int width;
+	int height;
+	int depth;
+	std::string color;
+	std::string material;
+	int cost;
+
+	std::string FIO;
+	std::string post;
+	std::string address;
+	std::string phoneNumber;
+	int wages;
+
+	std::string mark;
+	std::string model;
+	int stateNumber;
+
+	std::ifstream in("save.txt"); 
+	if (in.is_open())
+	{
+		int i;
+		std::getline(in, line);
+		int countF = std::stoi(line);
+		for (i = 0; i < countF; i++)
+		{
+			std::getline(in, type);
+			std::getline(in, color);
+			std::getline(in, line);
+			cost = std::stoi(line);
+			std::getline(in, line);
+			depth = std::stoi(line);
+			std::getline(in, line);
+			height = std::stoi(line);
+			std::getline(in, material);
+			std::getline(in, line);
+			width = std::stoi(line);
+			this->addFurniture(type, width, height, depth, color, material, cost);
+
+		}
+
+		std::getline(in, line);
+		int countW = std::stoi(line);
+		for (i = 0; i < countW; i++)
+		{
+			std::getline(in, address);
+			std::getline(in, FIO);
+			std::getline(in, phoneNumber);
+			std::getline(in, post);
+
+			std::getline(in, line);
+			wages = std::stoi(line);
+			this->addWorker(FIO, post, address, phoneNumber, wages);
+		}
+		
+		std::getline(in, line);
+		int countC = std::stoi(line);
+		for (i = 0; i < countC; i++)
+		{
+			std::getline(in, mark);
+			std::getline(in, model);
+			std::getline(in, line);
+			stateNumber = std::stoi(line);
+			this->addCar(mark, model, stateNumber);
+		}
+	}
+	in.close();
+
 }

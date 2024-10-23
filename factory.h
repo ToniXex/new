@@ -11,6 +11,10 @@ private:
 	int countWorker;
 	int countCar;
 
+	class base {
+	public:
+
+	};
 	class furniture {
 	private:
 		std::string type;
@@ -94,7 +98,7 @@ private:
 	car* cars;
 public:
 	factory();
-	/*~factory();*/
+	~factory();
 
 	int getCountFurnitures();
 	int getCountWorkers();
@@ -107,6 +111,15 @@ public:
 	void printFurniture(int number);
 	void printWorker(int number);
 	void printCar(int number);
+	void printAll();
+
+	void changeFurniture(int number,int number1,std::string type, int width, int height,  int depth, std::string color, std::string material,  int cost);
+	void changeWorker(int number,int number1,std::string FIO, std::string post, std::string address, std::string phoneNumber, int wages);
+	void changeCar(int number,int number1, std::string mark, std::string model, int stateNumber);
 
 	void deleteFurniture(int number);
+	void deleteWorker(int number);
+	void deleteCar(int number);
+	void safe();
+	void open();
 };
